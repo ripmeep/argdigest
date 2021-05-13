@@ -15,6 +15,8 @@ _______________________
 
 # Using the library
 
+(Refer to `test.c` for a full example)
+
 If you are familiar with the basics of C (unlike me) you know you can initialize main with `argc` and `argv`.
 But normally, just using `argv` to parse your arguments looks weak compared to the superior `--`s and `-`s!
 Now, you can (hopefully) parse your `argv` in a neater, more friendly cooler way.
