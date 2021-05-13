@@ -7,7 +7,7 @@ A simple argument parser and digester for C
 ```
 $ git clone https://github.com/ripmeep/argdigest/
 $ cd argdigest/
-$ gcc test.c -o test -I src/
+$ gcc test.c src/argdigest.c -o test -I src/
 $ ./test # (or ./test --help)
 ```
 
