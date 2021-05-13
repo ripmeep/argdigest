@@ -20,19 +20,7 @@
 #define ARGDIGEST_ERROR_VERBOSE         1 /* 1 = on    0 = off, simple right? */
 
 
-char *adlcltm()
-{
-	time_t t;
-	time(&t);
-
-	struct tm *ti = localtime(&t);
-
-	char lt[9];
-
-	snprintf(lt, 9, "%02d:%02d:%02d", ti->tm_hour, ti->tm_min, ti->tm_sec);
-
-	return strdup(lt);
-}
+char *adlcltm();
 
 #define ARGDIGEST_ERRLOG(fmt, args...) fprintf(stderr, "\r[%s] (#%d->%s) ", adlcltm(), __LINE__, __FILE__); fprintf(stderr, ""fmt, ##args); fflush(stderr);
 
