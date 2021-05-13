@@ -100,7 +100,8 @@ Now we can parse them!
 Note: -h/--help is automatically reserved and will show the help message if called
 
 ```c
-ArgDigestInvokeDigestion(&args); // will return negative if failed
+if (ArgDigestInvokeDigestion(&args) < 0)
+  return -1; // will return negative if failed or required value was not supplied
 
 ArgResult *name = ArgDigestGetValue(&args, "Name"); // will return NULL if user didn't call it or its not a valid parameter
 ArgResult *age = ArgDigestGetValue(&args, "Age");
