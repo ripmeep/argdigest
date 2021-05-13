@@ -75,6 +75,7 @@ typedef struct argdigest_t
 int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *description);
 int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *full_param, char help[], ARGDIGEST_TYPE arg_type, bool required);
 int ArgDigestInvokeDigestion(ArgDigest *digest);
+void ArgDigestFree(ArgDigest *digest);
 
 #define ARGDIGEST_H
 #endif
