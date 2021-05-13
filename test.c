@@ -1,5 +1,4 @@
 #include <argdigest.h>
-#include <argdigest.c>
 #include <errno.h>
 #include <unistd.h>
 
