@@ -109,7 +109,7 @@ ArgResult *age = ArgDigestGetValue(&args, "Age");
 printf("Your name is %s\n", name->value);
 
 if (age)
-  printf("%s is %d years old\n", name->value, *(int*)age->value);
+  printf("%s is %d years old\n", name->value, (int*)age->value);
 ```
 
 If you are nice, you will also `free` the `ArgDigest` structure when you're done using it.
