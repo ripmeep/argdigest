@@ -401,3 +401,16 @@ void ArgDigestFree(ArgDigest *digest)
         free(digest->param_list[i]);
     }
 }
+
+char *adlcltm() {
+	time_t t;
+	time(&t);
+
+	struct tm *ti = localtime(&t);
+
+	char lt[9];
+
+	snprintf(lt, 9, "%02d:%02d:%02d", ti->tm_hour, ti->tm_min, ti->tm_sec);
+
+	return strdup(lt);
+}
