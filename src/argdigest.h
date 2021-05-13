@@ -5,6 +5,7 @@
 */
 
 #ifndef ARGDIGEST_H
+#define ARGDIGEST_H
 
 #include <stdio.h>
 #include <string.h>
@@ -66,5 +67,4 @@ int ArgDigestInvokeDigestion(ArgDigest *digest);
 ArgResult *ArgDigestGetValue(ArgDigest *digest, char param_name[]);
 void ArgDigestFree(ArgDigest *digest);
 
-#define ARGDIGEST_H
 #endif
