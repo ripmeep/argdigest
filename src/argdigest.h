@@ -19,8 +19,8 @@
 #define ARGDIGEST_ERROR_UNKNOWN_PARAM   "Unknown parameter detected '%s'\nUse %s or %s for a full list of usable parameters and more information\n"
 #define ARGDIGEST_ERROR_REQUIRES_VALUE  "The parameter '%s' requires a value\nUse %s or %s for more information\n"
 #define ARGDIGEST_ERROR_REQUIRED_PARAM  "The %s parameter is required\nUse %s or %s for more information\n"
-#define ARGDIGEST_ERROR_VERBOSE false
 
+extern bool ARGDIGEST_ERROR_VERBOSE;
 extern bool ARGDIGEST_EXIT_ON_FAILURE;      /* true = yes   false = no */
 extern char *ARGDIGEST_HELP_SHORT_SWITCH;
 extern char *ARGDIGEST_HELP_LONG_SWITCH;
