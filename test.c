@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <argdigest.h>
 
 int main(int argc, char **argv)
 {
