@@ -46,6 +46,8 @@ Now, using this library has 3 simple steps:
 int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *description);
 ```
 
+(Leave `help` as NULL if you want argdigest to automatically make the help message for you)
+
 So in your C file, you can do this:
 ```c
 #include <stdio.h>
