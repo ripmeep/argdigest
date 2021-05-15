@@ -11,10 +11,21 @@
 
 #include "argdigest.h"
 
+
+// bool ARGDIGEST_ERROR_VERBOSE = false;
+bool ARGDIGEST_EXIT_ON_FAILURE = false;
+
+char *ARGDIGEST_HELP_SHORT_SWITCH = "-h";
+char *ARGDIGEST_HELP_LONG_SWITCH = "--help";
+
 int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *description)
 {
     if (argc < 1) /* who's using this with no args???? */
     {
+        #if ARGDIGEST_EXIT_ON_FAILURE
+            exit(-1);
+        #endif
+
         return -1;
     }
 
@@ -28,20 +39,22 @@ int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *de
         digest->custom_help = true;
     } else
     {
-        size_t base_help_len = strlen(ARGDIGEST_DEFAULT_HELP_PREFIX) + strlen(description) + 3 + strlen(argv[0]);
+        size_t base_help_len = strlen(ARGDIGEST_DEFAULT_HELP_PREFIX) + strlen(description) + strlen(ARGDIGEST_HELP_SHORT_SWITCH) + strlen(ARGDIGEST_HELP_LONG_SWITCH) +  strlen(argv[0]);
 
         digest->help = (char*)malloc(base_help_len + 1);
         
         if (digest->help == NULL)
         {
-            #if ARGDIGEST_ERROR_VERBOSE
+            if (ARGDIGEST_ERROR_VERBOSE)
                 ARGDIGEST_ERRLOG("Failed initializing Argument Digester -> help [malloc()]: %s\n", strerror(errno));
-            #endif
+
             return -2;
         }
-
-        sprintf(digest->help, "%s\n\n"ARGDIGEST_DEFAULT_HELP_PREFIX, description, argv[0]);
+    
+        sprintf(digest->help, "%s\n\n"ARGDIGEST_DEFAULT_HELP_PREFIX, description, argv[0], ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
     }
+
+
 
     digest->description = description;
     digest->help_len = strlen(digest->help);
@@ -51,9 +64,9 @@ int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *de
 
     if (digest->param_list == NULL)
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("Failed initializing Argument Digester -> parameter list [malloc()]: %s\n", strerror(errno));
-        #endif
+
         return -3;
     }
 
@@ -61,9 +74,9 @@ int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *de
 
     if (digest->param_names == NULL)
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("Failed initializing Argument Digester -> parameter names [malloc()]: %s\n", strerror(errno));
-        #endif
+
         return -4;
     }
 
@@ -71,9 +84,9 @@ int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *de
 
     if (digest->arglist == NULL)
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("Failed initializing Argument Digester -> argument list [malloc()]: %s\n", strerror(errno));
-        #endif
+
         return -4;
     }
 
@@ -81,21 +94,21 @@ int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *de
     return 0;
 }
 
-int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *full_param, char help[], ARGDIGEST_TYPE arg_type, bool required)
+int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *full_param, char help[], ARGDIGEST_TYPE arg_type, ARGDIGEST_MANDATORY required)
 {
     if (param == NULL && full_param == NULL) 
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("New parameter must include a short or long parameter switch, niether was passed\n");
-        #endif
+
         return -1;
     }
 
     if (strlen(param_name) < 1)
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("Parameter name cannot be empty\n");
-        #endif
+
         return -2;
     }
 
@@ -104,9 +117,9 @@ int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *f
         if (param){
             if (!strcmp(digest->param_list[i], param))
             {
-                #if ARGDIGEST_ERROR_VERBOSE
+                if (ARGDIGEST_ERROR_VERBOSE)
                     ARGDIGEST_ERRLOG("Duplicate parameter detected -> %s\n", param);
-                #endif
+
                 return -3;
             }
         }
@@ -115,9 +128,9 @@ int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *f
         {
             if (!strcmp(digest->param_list[i], full_param))
             {
-                #if ARGDIGEST_ERROR_VERBOSE
+                if (ARGDIGEST_ERROR_VERBOSE)
                     ARGDIGEST_ERRLOG("Duplicate parameter detected -> %s\n", param);
-                #endif
+
                 return -3;
             }
         }
@@ -140,9 +153,9 @@ int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *f
 
     if (digest->param_list == NULL)
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("Failed to extend Argument Digester parameter list [realloc()]: %s\n", strerror(errno));
-        #endif
+
         return -4;
     }
 
@@ -188,15 +201,15 @@ int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *f
 
         if (digest->help == NULL)
         {
-            #if ARGDIGEST_ERROR_VERBOSE
+            if (ARGDIGEST_ERROR_VERBOSE)
                 ARGDIGEST_ERRLOG("Failed to extend the Argument Digester help [realloc()]: %s\n", strerror(errno));
-            #endif
+
             return -5;
         }
 
         char new_entry[new_help_len + 128];
 
-        int new_bytes = sprintf(new_entry, "    %10s [%s%s%s] | %s%s%s: %s %s\n", param_name,  ((arg_type==ARG_STR)?"STRING":""), ((arg_type==ARG_INT)?"NUMBER":""), ((arg_type==ARG_SWITCH)?" BOOL ":""), ((param==NULL)?"":param), ((param==NULL||full_param==NULL)?"":"/"), ((full_param==NULL)?"":full_param), help, ((required==true)?"(Required)":""));
+        int new_bytes = sprintf(new_entry, "    %10s [%s%s%s] | %s %s %s: %s %s\n", param_name,  ((arg_type==ARG_STR)?"STRING":""), ((arg_type==ARG_INT)?"NUMBER":""), ((arg_type==ARG_SWITCH)?" BOOL ":""), ((param==NULL)?"":param), ((param==NULL||full_param==NULL)?"":"/"), ((full_param==NULL)?"":full_param), help, ((required==true)?"(Required)":""));
 
         memcpy(digest->help + digest->help_len, new_entry, new_bytes);
 
@@ -221,9 +234,9 @@ int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *f
 
     if (digest->param_names == NULL)
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("Failed to extend the Argument Digester parameter name list [realloc()]: %s\n", strerror(errno));
-        #endif
+
         return -6;
     }
 
@@ -231,13 +244,42 @@ int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *f
 
     if (digest->param_names == NULL)
     {
-        #if ARGDIGEST_ERROR_VERBOSE
+        if (ARGDIGEST_ERROR_VERBOSE)
             ARGDIGEST_ERRLOG("Failed to extend the Argument Digester argument list [realloc()]: %s\n", strerror(errno));
-        #endif
+
         return -7;
     }
 
    return 0;
+}
+
+int ArgDigestGlobalSetOpt(ARGDIGEST_OPTION mode, void *value)
+{
+    if (value == NULL)
+    {
+        if (ARGDIGEST_ERROR_VERBOSE)
+            ARGDIGEST_ERRLOG("Parameter 'value' must be a valid pointer, cannot be NULL [ArgDigestSetOpt()]\n");
+
+
+        return -1;
+    }
+
+    switch (mode)
+    {
+        case (ARGDIGEST_SET_EXIT_ON_FAILURE):
+            ARGDIGEST_EXIT_ON_FAILURE = *(bool*)value;
+            break;
+        case (ARGDIGEST_SET_ERROR_VERBOSITY):
+            #undef ARGDIGEST_ERROR_VERBOSE
+            #define ARGDIGEST_ERROR_VERBOSE *(bool*)value;
+            break;
+        case (ARGDIGEST_SET_HELP_SHORT_SWITCH):
+            ARGDIGEST_HELP_SHORT_SWITCH = (char*)value;
+            break;
+        case (ARGDIGEST_SET_HELP_LONG_SWITCH):
+            ARGDIGEST_HELP_LONG_SWITCH = (char*)value;
+            break;
+    }
 }
 
 int ArgDigestInvokeDigestion(ArgDigest *digest)
@@ -246,11 +288,17 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
 
     for (int i = 1; i < digest->argc; ++i)
     {
-        if (!strcmp(digest->argv[i], "-h") || !strcmp(digest->argv[i], "--help"))
+        if (!strcmp(digest->argv[i], ARGDIGEST_HELP_SHORT_SWITCH) || !strcmp(digest->argv[i], ARGDIGEST_HELP_LONG_SWITCH))
         {
             puts(digest->help);
+        
+            #if ARGDIGEST_EXIT_ON_FAILURE
+                exit(-1);
+            #endif
+            
             return -1;
         }
+
         for (int j = 0; j < digest->n_params; j++)
         {
             struct argresult_t *arg = digest->arglist[j];
@@ -265,8 +313,13 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
                 {
                     if (arg->chosen)
                     {
-                        fprintf(stderr, ARGDIGEST_ERROR_DUPLICATE_PARAM, arg->param);
+                        fprintf(stderr, ARGDIGEST_ERROR_DUPLICATE_PARAM, arg->param, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
                         fflush(stderr);
+
+                        #if ARGDIGEST_EXIT_ON_FAILURE
+                            exit(-1);
+                        #endif
+
                         return -1;
                     }
         
@@ -284,8 +337,13 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
                 {
                     if (arg->chosen)
                     {
-                        fprintf(stderr, ARGDIGEST_ERROR_DUPLICATE_PARAM, arg->full_param);
+                        fprintf(stderr, ARGDIGEST_ERROR_DUPLICATE_PARAM, arg->full_param, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
                         fflush(stderr);
+
+                        #if ARGDIGEST_EXIT_ON_FAILURE
+                            exit(-1);
+                        #endif
+
                         return -1;
                     }
 
@@ -301,7 +359,7 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
             {
                 if ((digest->argc - 1) <= i)
                 {
-                    fprintf(stderr, ARGDIGEST_ERROR_REQUIRES_VALUE, cparam);
+                    fprintf(stderr, ARGDIGEST_ERROR_REQUIRES_VALUE, cparam, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
                     fflush(stderr);
                     return -2;
                 }
@@ -312,7 +370,7 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
                     {
                         if (!strcmp(digest->arglist[x]->param, digest->argv[i + 1]))
                         {
-                            fprintf(stderr, ARGDIGEST_ERROR_REQUIRES_VALUE, cparam);
+                            fprintf(stderr, ARGDIGEST_ERROR_REQUIRES_VALUE, cparam, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
                             fflush(stderr);
                             return -2;
                         }
@@ -322,7 +380,7 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
                     {
                         if (!strcmp(digest->arglist[x]->full_param, digest->argv[i + 1]))
                         {
-                            fprintf(stderr, ARGDIGEST_ERROR_REQUIRES_VALUE, cparam);
+                            fprintf(stderr, ARGDIGEST_ERROR_REQUIRES_VALUE, cparam, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
                             fflush(stderr);
                             return -2;
                         }
@@ -350,8 +408,8 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
 
         if (arg->required && !arg->chosen)
         {
-            fprintf(stderr, ARGDIGEST_ERROR_REQUIRED_PARAM, arg->param_name);
-            fprintf(stderr, "Parameter Informaion: %s [%s%s%s] %s%s%s\n", \
+            fprintf(stderr, ARGDIGEST_ERROR_REQUIRED_PARAM, arg->param_name, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
+            fprintf(stderr, "Parameter Informaion: %s [%s%s%s] %s %s %s\n", \
                 arg->param_name, 
                 ((arg->type==ARG_STR)?"STRING":""), 
                 ((arg->type==ARG_INT)?"NUMBER":""), 
@@ -361,6 +419,10 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
                 ((arg->full_param!=NULL)?arg->full_param:"")
             );
             fflush(stderr);
+
+            if (ARGDIGEST_EXIT_ON_FAILURE)
+                exit(-1);
+
             return -3;
         }
     }
