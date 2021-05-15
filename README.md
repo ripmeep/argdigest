@@ -1,13 +1,21 @@
 # argdigest
 A simple argument parser and digester for C
 
+# Compile the library
 
-# Run the test
+
+# Compile the library
 
 ```
 $ git clone https://github.com/ripmeep/argdigest/
 $ cd argdigest/
-$ gcc test.c src/argdigest.c -o test -I src/
+$ make
+```
+
+# Run the test
+
+```
+$ gcc test.c -o test -largdigest
 $ ./test # (or ./test --help)
 ```
 
