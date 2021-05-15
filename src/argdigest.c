@@ -12,7 +12,7 @@
 #include "argdigest.h"
 
 
-// bool ARGDIGEST_ERROR_VERBOSE = false;
+bool ARGDIGEST_ERROR_VERBOSE = false;
 bool ARGDIGEST_EXIT_ON_FAILURE = false;
 
 char *ARGDIGEST_HELP_SHORT_SWITCH = "-h";
@@ -22,9 +22,8 @@ int ArgDigestInit(ArgDigest *digest, int argc, char **argv, char *help, char *de
 {
     if (argc < 1) /* who's using this with no args???? */
     {
-        #if ARGDIGEST_EXIT_ON_FAILURE
+        if (ARGDIGEST_EXIT_ON_FAILURE)
             exit(-1);
-        #endif
 
         return -1;
     }
@@ -270,8 +269,7 @@ int ArgDigestGlobalSetOpt(ARGDIGEST_OPTION mode, void *value)
             ARGDIGEST_EXIT_ON_FAILURE = *(bool*)value;
             break;
         case (ARGDIGEST_SET_ERROR_VERBOSITY):
-            #undef ARGDIGEST_ERROR_VERBOSE
-            #define ARGDIGEST_ERROR_VERBOSE *(bool*)value;
+            ARGDIGEST_ERROR_VERBOSE = *(bool*)value;
             break;
         case (ARGDIGEST_SET_HELP_SHORT_SWITCH):
             ARGDIGEST_HELP_SHORT_SWITCH = (char*)value;
@@ -292,9 +290,8 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
         {
             puts(digest->help);
         
-            #if ARGDIGEST_EXIT_ON_FAILURE
+            if (ARGDIGEST_EXIT_ON_FAILURE)
                 exit(-1);
-            #endif
             
             return -1;
         }
@@ -316,9 +313,8 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
                         fprintf(stderr, ARGDIGEST_ERROR_DUPLICATE_PARAM, arg->param, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
                         fflush(stderr);
 
-                        #if ARGDIGEST_EXIT_ON_FAILURE
+                        if (ARGDIGEST_EXIT_ON_FAILURE)
                             exit(-1);
-                        #endif
 
                         return -1;
                     }
@@ -340,9 +336,8 @@ int ArgDigestInvokeDigestion(ArgDigest *digest)
                         fprintf(stderr, ARGDIGEST_ERROR_DUPLICATE_PARAM, arg->full_param, ARGDIGEST_HELP_SHORT_SWITCH, ARGDIGEST_HELP_LONG_SWITCH);
                         fflush(stderr);
 
-                        #if ARGDIGEST_EXIT_ON_FAILURE
+                        if (ARGDIGEST_EXIT_ON_FAILURE)
                             exit(-1);
-                        #endif
 
                         return -1;
                     }
