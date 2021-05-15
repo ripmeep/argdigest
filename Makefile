@@ -5,7 +5,7 @@ HEADERS=argdigest.h
 CFLAGS=-fPIC -shared
 OUT_DIR=lib/
 OUT=libargdigest.so
-LIBLOC=/usr/lib/x86_64-linux-gnu/
+LIBLOC=/usr/lib/
 INCLUDE_LOC=/usr/include/
 
 all: $(SOURCE_DIR)/$(SOURCES)
