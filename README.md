@@ -80,6 +80,40 @@ You specifiy this for each argument you make.
 You need to give each argument a name, at least 1 parameter switch, and it's type.
 You can also specify if the argument is required or not.
 
+(Update): There are also a few things you can change now, I have added a new function as follows:
+(Note): Please use `ArgDigestGlobalSetOpt` BEFORE you use `ArgDigestInit`
+
+`argdigest.h`
+```c
+int ArgDigestGlobalSetOpt(ARGDIGEST_OPTION mode, void *value);
+```
+
+This allows you to change certain global values that affect the way argdigest performs.
+Change the help switches:
+_______________________
+```c
+ArgDigestGlobalSetOpt(ARGDIGEST_SET_HELP_SHORT_SWITCH, "-helpme");
+```
+
+Changes the short help switch from `-h` to `-helpme`
+_______________________
+```c
+ArgDigestGlobalSetOpt(ARGDIGEST_SET_HELP_LONG_SWITCH, "--helpmepls");
+```
+Changes the long help switch from `--help` to `--helpmepls`
+_______________________
+```c
+bool eof = true;
+ArgDigestGlobalSetOpt(ARGDIGEST_SET_EXIT_ON_FAILURE, &eof);
+```
+Tells argdigest to exit on user failures (E.G a required parameter was not passed)
+_______________________
+```c
+bool verbose = true;
+ArgDigestGlobalSetOpt(ARGDIGEST_SET_ERROR_VERBOSE, &verbose);
+```
+Turns on error verbosity and logging
+_______________________
 `argdigest.h`
 ```c
 int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *full_param, char help[], ARGDIGEST_TYPE arg_type, bool required);
