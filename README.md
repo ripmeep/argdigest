@@ -116,7 +116,7 @@ Turns on error verbosity and logging
 _______________________
 `argdigest.h`
 ```c
-int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *full_param, char help[], ARGDIGEST_TYPE arg_type, bool required);
+int ArgDigestAddParam(ArgDigest *digest, char param_name[], char *param, char *full_param, char help[], ARGDIGEST_TYPE arg_type, ARGDIGEST_MANDATORY required);
 ```
 
 Let's say that I want to make 2 parameters.
@@ -133,8 +133,8 @@ int main(int argc, char **argv)
   
   ArgDigestInit(&args, argc, argv, NULL, "The description of your program");
   
-  ArgDigestAddParam(&args, "Name", "-N", "--name", "What is your name?", ARG_STR, true); // required = true
-  ArgDigestAddParam(&args, "Age", "-A", "--age", "How old are you?", ARG_INT, false);
+  ArgDigestAddParam(&args, "Name", "-N", "--name", "What is your name?", ARG_STR, ARG_REQUIRED); // required = true
+  ArgDigestAddParam(&args, "Age", "-A", "--age", "How old are you?", ARG_INT, ARG_NOT_REQUIRED);
   
   ...
 ```
