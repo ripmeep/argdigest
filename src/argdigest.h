@@ -15,7 +15,7 @@
 
 #define ARGDIGEST_DEFAULT_HELP_PREFIX   "Usage and parameter help for %s:\n    %s OR %s: Shows this usage information\n\n"
 
-#define ARGDIGEST_ERROR_DUPLICATE_PARAM "Duplicate parameter detected '%s'\nUse -h or --help for more information\n"
+#define ARGDIGEST_ERROR_DUPLICATE_PARAM "Duplicate parameter detected '%s'\nUse %s or %s for more information\n"
 #define ARGDIGEST_ERROR_UNKNOWN_PARAM   "Unknown parameter detected '%s'\nUse %s or %s for a full list of usable parameters and more information\n"
 #define ARGDIGEST_ERROR_REQUIRES_VALUE  "The parameter '%s' requires a value\nUse %s or %s for more information\n"
 #define ARGDIGEST_ERROR_REQUIRED_PARAM  "The %s parameter is required\nUse %s or %s for more information\n"
@@ -27,7 +27,7 @@ extern char *ARGDIGEST_HELP_LONG_SWITCH;
 
 char *adlcltm();
 
-#define ARGDIGEST_ERRLOG(fmt, args...) fprintf(stderr, ""); fprintf(stderr, "[%s] (#%d->%s) "fmt, adlcltm(), __LINE__, __FILE__, ##args); fflush(stderr);
+#define ARGDIGEST_ERRLOG(fmt, args...) fprintf(stderr, "[%s] (#%d->%s) "fmt, adlcltm(), __LINE__, __FILE__, ##args); fflush(stderr);
 
 typedef enum { ARG_STR, ARG_INT, ARG_SWITCH } ARGDIGEST_TYPE;
 typedef enum { ARG_NOT_REQUIRED, ARG_REQUIRED } ARGDIGEST_MANDATORY;
