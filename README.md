@@ -46,7 +46,6 @@ Now, using this library has 3 simple steps:
   1. Initialize with argc and argv
   2. Add your argument parameters
   3. Digest them
-  4. Invest in DOGE (not required)
 
 # How to initialize?
 `argdigest.c`
